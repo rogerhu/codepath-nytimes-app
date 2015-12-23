@@ -1,11 +1,12 @@
 package codepath.com.nytimesfun;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.JsonHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.loopj.android.http.TextHttpResponseHandler;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -88,28 +89,31 @@ public class MainActivity extends AppCompatActivity {
 //        url = String.format("http://api.nytimes.com/svc/topstories/v1/%s.json", "home");
 //        params.put("api-key", "8c0c9f857fb5e21ca09d54f3fad286ce:3:4701790");
 
-        client.get(url, params,
-                new TextHttpResponseHandler() {
-                    @Override
-                    public void onFailure(int statusCode, Header[] headers, String responseString,
-                            Throwable throwable) {
-                        Log.d("hey", "here");
-                    }
+        client.get(url, params, new JsonHttpResponseHandler() {
 
-                    @Override
-                    public void onSuccess(int statusCode, Header[] headers, String responseString) {
-/*                        Type collectionType = new TypeToken<List<Multimedia>>(){}.getType();
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString,
+                    Throwable throwable) {
+                super.onFailure(statusCode, headers, responseString, throwable);
+            }
 
-                        Gson gson = new GsonBuilder().registerTypeAdapter(collectionType, new MultimediaDeserializer()).create();
-                        TopStories a = gson.fromJson(responseString, TopStories.class);*/
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
+                super.onSuccess(statusCode, headers, response);
+            }
 
-                        Gson gson = new GsonBuilder().create();
-                        SearchResponseData a = gson.fromJson(responseString, SearchResponseData.class);
-                        adapter.addAll(a.getSearchResponse().getDocs());
-
+            @Override
+                    public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                        JSONArray articleJsonResults = null;
+                        try {
+                            articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
+                            adapter.addAll(Article.fromJSONArray(articleJsonResults));
+                            Log.d("DEBUG", articleJsonResults.toString());
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
-
     }
 
     @Override
