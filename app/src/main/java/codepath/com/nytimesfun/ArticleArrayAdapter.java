@@ -32,7 +32,7 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
         ivImage.setImageResource(R.mipmap.ic_launcher);
 
         TextView tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
-        tvTitle.setText(article.getSnippet());
+        tvTitle.setText(article.getHeadline());
 
         String thumbNail = article.getThumbnail();
         if (!TextUtils.isEmpty(thumbNail)) {

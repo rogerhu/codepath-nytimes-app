@@ -8,21 +8,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
 
 import java.util.ArrayList;
 
@@ -30,9 +26,9 @@ import cz.msebera.android.httpclient.Header;
 
 public class MainActivity extends AppCompatActivity {
 
-    GridView mGridView;
+    RecyclerView mRecyclerView;
     ArrayList<Article> articles;
-    ArticleArrayAdapter adapter;
+    ArticleRecyclerViewAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,24 +37,28 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        mRecyclerView = (RecyclerView) findViewById(R.id.rvResults);
+        articles = new ArrayList<>();
+/*        Article article = new Article(new JSONObject());
+        article.snippet = "hey";
+        articles.add(article);*/
+        adapter = new ArticleRecyclerViewAdapter(articles);
+        mRecyclerView.setAdapter(adapter);
+
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        //layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
+        mRecyclerView.setLayoutManager(layoutManager);
+
+        loadDataFromApi(0);
+        mRecyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+            public void onLoadMore(int page, int totalItemsCount) {
+                loadDataFromApi(page);
             }
         });
 
-        mGridView = (GridView) findViewById(R.id.gvItems);
-        articles = new ArrayList<>();
-        adapter = new ArticleArrayAdapter(this, articles);
-        mGridView.setAdapter(adapter);
-        adapter.clear();
-
-        loadDataFromApi(0);
-
-        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+/*        mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Article article = articles.get(position);
@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 loadDataFromApi(page);
                 return true;
             }
-        });
+        });*/
     }
 
     public void loadDataFromApi(int page) {
@@ -107,7 +107,10 @@ public class MainActivity extends AppCompatActivity {
                         JSONArray articleJsonResults = null;
                         try {
                             articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
-                            adapter.addAll(Article.fromJSONArray(articleJsonResults));
+                            int curPosition = articles.size();
+                            ArrayList<Article> newArticles = Article.fromJSONArray(articleJsonResults);
+                            articles.addAll(newArticles);
+                            adapter.notifyItemRangeInserted(curPosition, curPosition + newArticles.size() - 1);
                             Log.d("DEBUG", articleJsonResults.toString());
                         } catch (JSONException e) {
                             e.printStackTrace();

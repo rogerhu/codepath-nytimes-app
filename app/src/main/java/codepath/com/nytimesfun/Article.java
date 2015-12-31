@@ -6,21 +6,23 @@ import org.json.JSONObject;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Article implements Serializable {
     String web_url;
-    String snippet;
+    String headline;
 
     String thumbNail;
 
     public Article(JSONObject jsonObject) {
         try {
             this.web_url = jsonObject.getString("web_url");
-            this.snippet = jsonObject.getString("snippet");
+            this.headline = jsonObject.getJSONObject("headline").getString("main");
+
             JSONArray multimedia = jsonObject.getJSONArray("multimedia");
 
             if (multimedia.length() > 0) {
-                JSONObject multimediaJson = multimedia.getJSONObject(0);
+                JSONObject multimediaJson = multimedia.getJSONObject(new Random().nextInt(multimedia.length() - 1));
                 this.thumbNail = "http://www.nytimes.com/" + multimediaJson.getString("url");
             } else {
                 this.thumbNail = "";
@@ -46,8 +48,8 @@ public class Article implements Serializable {
     public String getWebUrl() {
         return web_url;
     }
-    public String getSnippet() {
-        return snippet;
+    public String getHeadline() {
+        return headline;
     }
 
     public String getThumbnail() { return thumbNail;}
