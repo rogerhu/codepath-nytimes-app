@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -19,7 +20,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.view.View;
 
 import java.util.ArrayList;
 
@@ -135,10 +136,6 @@ public class MainActivity extends AppCompatActivity {
             public boolean onQueryTextSubmit(String query) {
                 // perform query here
                 searchQuery = query;
-                articles.clear();
-                adapter.notifyDataSetChanged();
-                Toast.makeText(MainActivity.this, "here", Toast.LENGTH_SHORT).show();
-                loadDataFromApi(0);
 
                 return true;
             }
@@ -151,4 +148,31 @@ public class MainActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle item selection
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                // Handle this selection
+                launchSettings();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    public void search(View view) {
+        initiateSearch();
+    }
+
+    public void launchSettings()  {
+        Intent intent = new Intent(this, SettingsActivity.class);
+        startActivity(intent);
+    }
+
+    public void initiateSearch() {
+        articles.clear();
+        adapter.notifyDataSetChanged();
+        loadDataFromApi(0);
+    }
 }

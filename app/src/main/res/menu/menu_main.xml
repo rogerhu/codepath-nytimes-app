@@ -2,10 +2,15 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="codepath.com.nytimesfun.MainActivity">
+    <item android:id="@+id/action_settings"
+        android:orderInCategory="5"
+        android:title="Settings"
+        android:icon="@android:drawable/ic_menu_preferences"
+        app:showAsAction="ifRoom" />
     <item android:id="@+id/action_search"
         android:orderInCategory="5"
         android:title="Search"
         android:icon="@android:drawable/ic_menu_search"
-        app:showAsAction="ifRoom|collapseActionView"
+        app:showAsAction="never|collapseActionView"
         app:actionViewClass="android.support.v7.widget.SearchView" />
 </menu>
