@@ -29,7 +29,6 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
             convertView = inflator.inflate(R.layout.item_image_result, parent, false);
         }
         ImageView ivImage = (ImageView) convertView.findViewById(R.id.ivImage);
-        ivImage.setImageResource(R.mipmap.ic_launcher);
 
         TextView tvTitle = (TextView) convertView.findViewById(R.id.tvTitle);
         tvTitle.setText(article.getHeadline());
@@ -37,6 +36,10 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
         String thumbNail = article.getThumbnail();
         if (!TextUtils.isEmpty(thumbNail)) {
             Picasso.with(getContext()).load(thumbNail).fit().into(ivImage);
+            ivImage.setVisibility(View.VISIBLE);
+        } else {
+            ivImage.setImageBitmap(null);
+            ivImage.setVisibility(View.GONE);
         }
 
 

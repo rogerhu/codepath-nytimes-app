@@ -13,6 +13,8 @@ import java.util.Random;
 // multimedia: 1) must be prefixed with www.nytimes.com, random to provide staggered image view
 // stuff in <include layout=
 // heteregenous views: document_type
+// handling json objects that don't have
+// news desk values -- adding params
 
 public class Article implements Serializable {
     String web_url;

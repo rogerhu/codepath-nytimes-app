@@ -56,7 +56,7 @@ public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecy
         @Override
         public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
             float ratio = (float) bitmap.getHeight() / (float) bitmap.getWidth();
-            ivImage.setHeightRatio(ratio);
+//            ivImage.setHeightRatio(ratio);
             ivImage.setImageBitmap(bitmap);
             ivImage.setVisibility(View.VISIBLE);
         }
@@ -96,7 +96,7 @@ public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecy
 
         } else {
             holder.ivImage.setImageBitmap(null);
-            holder.ivImage.setVisibility(View.GONE);
+//            holder.ivImage.setVisibility(View.GONE);
         }
 
     }

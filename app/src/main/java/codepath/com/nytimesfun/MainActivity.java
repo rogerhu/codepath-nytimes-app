@@ -12,7 +12,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
@@ -31,7 +31,7 @@ public class MainActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
     ArrayList<Article> articles;
     ArticleRecyclerViewAdapter adapter;
-
+//    ArticleArrayAdapter adapter;
     String searchQuery;
 
     @Override
@@ -46,15 +46,19 @@ public class MainActivity extends AppCompatActivity {
 /*        Article article = new Article(new JSONObject());
         article.snippet = "hey";
         articles.add(article);*/
+
+        //adapter = new ArticleArrayAdapter(this, articles);
+        //GridView lv = (GridView) findViewById(R.id.lvResults);
+        //lv.setAdapter(adapter);
         adapter = new ArticleRecyclerViewAdapter(articles);
         mRecyclerView.setAdapter(adapter);
 
 //        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+//        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
         //layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
         mRecyclerView.setLayoutManager(layoutManager);
 
-        loadDataFromApi(0);
         mRecyclerView.addOnScrollListener(new EndlessRecyclerViewScrollListener(layoutManager) {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
@@ -88,7 +92,13 @@ public class MainActivity extends AppCompatActivity {
         RequestParams params = new RequestParams();
         params.put("api-key", "e863004d8ddc2900d7111aa358a8bdbb:19:4701790");
         params.put("q", searchQuery);
-//        params.put("fq", "news_desk:(\"Sports\")");
+//        params.put("fq", "news_desk:(\"Sports\" \"Science\")");
+
+//        params.put("fq", "news_desk:(\"Fashion & Style\")");
+// params.put("fq", "news_desk:(\"Arts\")");
+
+        params.put("fq", "news_desk:(\"Arts\" \"Fashion & Style\")");
+
         String url = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
         params.put("page", page);
 //        params.put("fq", "type_of_material:(\"News\")");
@@ -96,12 +106,6 @@ public class MainActivity extends AppCompatActivity {
 //        params.put("api-key", "8c0c9f857fb5e21ca09d54f3fad286ce:3:4701790");
 
         client.get(url, params, new JsonHttpResponseHandler() {
-
-            @Override
-            public void onFailure(int statusCode, Header[] headers, String responseString,
-                    Throwable throwable) {
-                super.onFailure(statusCode, headers, responseString, throwable);
-            }
 
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
@@ -116,7 +120,8 @@ public class MainActivity extends AppCompatActivity {
                             int curPosition = articles.size();
                             ArrayList<Article> newArticles = Article.fromJSONArray(articleJsonResults);
                             articles.addAll(newArticles);
-                            adapter.notifyItemRangeInserted(curPosition, curPosition + newArticles.size() - 1);
+//                            adapter.notifyItemRangeInserted(curPosition, curPosition + newArticles.size() - 1);
+                            adapter.notifyDataSetChanged();
                             Log.d("DEBUG", articleJsonResults.toString());
                         } catch (JSONException e) {
                             e.printStackTrace();
