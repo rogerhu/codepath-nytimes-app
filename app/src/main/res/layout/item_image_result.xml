@@ -6,24 +6,24 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <!--codepath.com.nytimesfun.DynamicHeightImageView
+    <codepath.com.nytimesfun.DynamicHeightImageView
         android:id="@+id/ivImage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:scaleType="centerCrop"
-        tools:src="@mipmap/ic_launcher" /-->
+        tools:src="@mipmap/ic_launcher" />
 
-
-    <codepath.com.nytimesfun.DynamicHeightImageView
+    <!--codepath.com.nytimesfun.DynamicHeightImageView
     android:id="@+id/ivImage"
     android:layout_width="75dp"
     android:layout_height="75dp"
     android:scaleType="centerCrop"
-    tools:src="@mipmap/ic_launcher"/>
+    tools:src="@mipmap/ic_launcher"/-->
 
     <TextView
         android:id="@+id/tvTitle"
         android:textSize="10sp"
+        android:textColor="@android:color/black"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignLeft="@id/ivImage"

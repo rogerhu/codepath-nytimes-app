@@ -8,6 +8,7 @@ import android.util.Log;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Random;
 
 // multimedia: 1) must be prefixed with www.nytimes.com, random to provide staggered image view
@@ -15,8 +16,13 @@ import java.util.Random;
 // heteregenous views: document_type
 // handling json objects that don't have
 // news desk values -- adding params
+// escaping Fashion & Values
+// importing vector images
+// staggeredgridview w/ endless scroll listener
+// slot machine with staggeredgridview
+// SearchView bug - https://code.google.com/p/android/issues/detail?id=24599 (http://stackoverflow.com/questions/7409288/how-to-dismiss-keyboard-in-android-searchview)
 
-public class Article implements Serializable {
+public class Article implements Serializable, Comparator<Article> {
     String web_url;
     String headline;
 
@@ -63,4 +69,13 @@ public class Article implements Serializable {
     }
 
     public String getThumbnail() { return thumbNail;}
+
+    @Override
+    public int compare(Article lhs, Article rhs) {
+        if (lhs.getWebUrl().equals(rhs.getWebUrl())) {
+            return 0;
+        } else {
+            return -1;
+        }
+    }
 }

@@ -22,6 +22,7 @@
         android:layout_alignParentStart="true"
         android:layout_toStartOf="@+id/search"
         android:layout_toLeftOf="@+id/search"
+        android:visibility="gone"
         android:hint="Search..." />
 
     <android.support.v7.widget.RecyclerView xmlns:tools="http://schemas.android.com/tools"
@@ -56,7 +57,8 @@
         android:layout_alignParentEnd="true"
         android:background="@color/colorAccent"
         android:allowUndo="true"
-        android:textColor="@android:color/white" />
+        android:textColor="@android:color/white"
+        android:visibility="gone"/>
 
 
 </RelativeLayout>

@@ -12,9 +12,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -23,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import cz.msebera.android.httpclient.Header;
 
@@ -33,6 +34,8 @@ public class MainActivity extends AppCompatActivity {
     ArticleRecyclerViewAdapter adapter;
 //    ArticleArrayAdapter adapter;
     String searchQuery;
+
+    HashSet<String> articlesSeen = new HashSet<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +56,9 @@ public class MainActivity extends AppCompatActivity {
         adapter = new ArticleRecyclerViewAdapter(articles);
         mRecyclerView.setAdapter(adapter);
 
-//        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
+        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(4, StaggeredGridLayoutManager.VERTICAL);
 //        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
+        //GridLayoutManager layoutManager = new GridLayoutManager(this, 4);
         //layoutManager.setGapStrategy(StaggeredGridLayoutManager.GAP_HANDLING_NONE);
         mRecyclerView.setLayoutManager(layoutManager);
 
@@ -97,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
 //        params.put("fq", "news_desk:(\"Fashion & Style\")");
 // params.put("fq", "news_desk:(\"Arts\")");
 
-        params.put("fq", "news_desk:(\"Arts\" \"Fashion & Style\")");
+        params.put("fq", "news_desk:(\"Sports\" \"Arts\" \"Fashion & Style\")");
 
         String url = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
         params.put("page", page);
@@ -119,8 +122,18 @@ public class MainActivity extends AppCompatActivity {
                             articleJsonResults = response.getJSONObject("response").getJSONArray("docs");
                             int curPosition = articles.size();
                             ArrayList<Article> newArticles = Article.fromJSONArray(articleJsonResults);
+
+                            /*
+                            for (Article a: newArticles) {
+                                if (!articlesSeen.contains(a.getWebUrl())) {
+                                    articlesSeen.add(a.getWebUrl());
+                                    articles.add(a);
+                                } else {
+                                    Log.d("DEBUG", "**here");
+                                }
+                            }*/
                             articles.addAll(newArticles);
-//                            adapter.notifyItemRangeInserted(curPosition, curPosition + newArticles.size() - 1);
+                            adapter.notifyItemRangeInserted(curPosition, curPosition + newArticles.size() - 1);
                             adapter.notifyDataSetChanged();
                             Log.d("DEBUG", articleJsonResults.toString());
                         } catch (JSONException e) {
@@ -135,13 +148,14 @@ public class MainActivity extends AppCompatActivity {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 // perform query here
                 searchQuery = query;
-
+                searchView.clearFocus();
+                initiateSearch();
                 return true;
             }
 
