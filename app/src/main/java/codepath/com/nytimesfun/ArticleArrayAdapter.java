@@ -26,7 +26,7 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
         if (convertView == null) {
             LayoutInflater inflator = LayoutInflater.from(getContext());
             // 3 parameters -- 1st item I want to inflate, root is parent, do not want to attach yet
-            convertView = inflator.inflate(R.layout.item_image_result, parent, false);
+            convertView = inflator.inflate(R.layout.item_image_result2, parent, false);
         }
         ImageView ivImage = (ImageView) convertView.findViewById(R.id.ivImage);
 
@@ -36,10 +36,8 @@ public class ArticleArrayAdapter extends ArrayAdapter<Article> {
         String thumbNail = article.getThumbnail();
         if (!TextUtils.isEmpty(thumbNail)) {
             Picasso.with(getContext()).load(thumbNail).fit().into(ivImage);
-            ivImage.setVisibility(View.VISIBLE);
         } else {
             ivImage.setImageBitmap(null);
-            ivImage.setVisibility(View.GONE);
         }
 
 

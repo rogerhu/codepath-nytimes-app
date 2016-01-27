@@ -31,7 +31,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:showIn="@layout/activity_main"
-        android:visibility="visible"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
         android:layout_below="@+id/search" />
@@ -43,7 +42,6 @@
      android:layout_width="match_parent"
      android:layout_height="match_parent"
         android:numColumns="4"
-        android:visibility="gone"
      tools:showIn="@layout/activity_main"></GridView>
 
     <Button

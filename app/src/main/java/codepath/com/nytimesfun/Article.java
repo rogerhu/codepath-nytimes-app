@@ -13,7 +13,7 @@ import java.util.Random;
 
 // multimedia: 1) must be prefixed with www.nytimes.com, random to provide staggered image view
 // stuff in <include layout=
-// heteregenous views: document_type
+// heteregenous views: document_type: article,
 // handling json objects that don't have
 // news desk values -- adding params
 // escaping Fashion & Values
@@ -21,6 +21,7 @@ import java.util.Random;
 // staggeredgridview w/ endless scroll listener
 // slot machine with staggeredgridview
 // SearchView bug - https://code.google.com/p/android/issues/detail?id=24599 (http://stackoverflow.com/questions/7409288/how-to-dismiss-keyboard-in-android-searchview)
+// gap strategy
 
 public class Article implements Serializable, Comparator<Article> {
     String web_url;
