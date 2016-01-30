@@ -7,7 +7,9 @@ import com.loopj.android.http.RequestParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.parceler.Parcels;
 
+import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
@@ -24,16 +26,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.GridView;
 
 import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 import cz.msebera.android.httpclient.Header;
 
-public class MainActivity extends AppCompatActivity implements SettingsDialog.onFinishedListener {
+public class MainActivity extends AppCompatActivity implements SettingsDialog.onFinishedListener, DatePickerDialog.OnDateSetListener {
 
     RecyclerView mRecyclerView;
     GridView mGridView;
@@ -48,6 +52,9 @@ public class MainActivity extends AppCompatActivity implements SettingsDialog.on
 
     String mSortOrder = "";
     ArrayList<String> mNewsDeskValues = new ArrayList<>();
+    Calendar mCalendar;
+
+    SettingsDialog settingsDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,13 +89,14 @@ public class MainActivity extends AppCompatActivity implements SettingsDialog.on
         } else {
             mRecyclerView.setVisibility(View.GONE);
             adapter2 = new ArticleArrayAdapter(this, articles);
+            mGridView.setVisibility(View.VISIBLE);
             mGridView.setAdapter(adapter2);
             mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Article article = articles.get(position);
                     Intent intent = new Intent(MainActivity.this, ArticleActivity.class);
-                    intent.putExtra(ArticleActivity.ARTICLE, article);
+                    intent.putExtra(ArticleActivity.ARTICLE, Parcels.wrap(article));
                     startActivity(intent);
                 }
             });
@@ -116,12 +124,12 @@ public class MainActivity extends AppCompatActivity implements SettingsDialog.on
         if (mNewsDeskValues.size() > 0) {
             params.put("fq", String.format("news_desk:(%s)", TextUtils.join(", ", mNewsDeskValues)));
         }
-//        params.put("fq", "news_desk:(\"Sports\" \"Science\")");
 
-//        params.put("fq", "news_desk:(\"Fashion & Style\")");
-//        params.put("fq", "news_desk:(\"Arts\")");
+        if (mCalendar != null) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyyMMdd");
+            params.put("begin_date", format.format(mCalendar.getTime()));
+        }
 
-        //params.put("fq", "news_desk:(\"Blogs\" \"Foreign\" \"Sports\" \"Arts\" \"Fashion & Style\")");
 
         String url = "http://api.nytimes.com/svc/search/v2/articlesearch.json";
         params.put("page", page);
@@ -133,6 +141,12 @@ public class MainActivity extends AppCompatActivity implements SettingsDialog.on
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                 super.onSuccess(statusCode, headers, response);
+            }
+
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString,
+                    Throwable throwable) {
+                throwable.printStackTrace();
             }
 
             @Override
@@ -160,26 +174,30 @@ public class MainActivity extends AppCompatActivity implements SettingsDialog.on
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.menu_main, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String query) {
-                // perform query here
-                searchQuery = query;
-                searchView.clearFocus();
-                initiateSearch();
-                return true;
-            }
 
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
-            }
-        });
-        return super.onCreateOptionsMenu(menu);
+        if (searchView != null) {
+            searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                @Override
+                public boolean onQueryTextSubmit(String query) {
+                    // perform query here
+                    searchQuery = query;
+                    searchView.clearFocus();
+                    initiateSearch();
+                    return true;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String newText) {
+                    return false;
+                }
+            });
+        }
+        return true;
     }
 
     @Override
@@ -204,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements SettingsDialog.on
         startActivity(intent);*/
 
         FragmentManager fm = getSupportFragmentManager();
-        SettingsDialog settingsDialog = SettingsDialog.newInstance();
+        settingsDialog = SettingsDialog.newInstance();
         settingsDialog.show(fm, "fragment_edit_name");
 
     }
@@ -229,7 +247,7 @@ public class MainActivity extends AppCompatActivity implements SettingsDialog.on
 
     @Override
     public void onFinished(@SettingsDialog.SortOrder int sortOrder,
-            @CheckboxOptions.CHOICES int checkboxOptions, Calendar curDate) {
+            @CheckboxOptions.CHOICES int checkboxOptions) {
         if (sortOrder == SettingsDialog.OLDEST) {
             mSortOrder = "oldest";
         } else if (sortOrder == SettingsDialog.NEWEST) {
@@ -254,5 +272,13 @@ public class MainActivity extends AppCompatActivity implements SettingsDialog.on
         }
     }
 
+    @Override
+    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        mCalendar = Calendar.getInstance();
+        mCalendar.set(Calendar.YEAR, year);
+        mCalendar.set(Calendar.MONTH, monthOfYear);
+        mCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+        settingsDialog.setDate(mCalendar.getTime());
+    }
 
 }

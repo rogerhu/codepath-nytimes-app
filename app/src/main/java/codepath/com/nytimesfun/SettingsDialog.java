@@ -1,6 +1,5 @@
 package codepath.com.nytimesfun;
 
-import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.IntDef;
 import android.support.v4.app.DialogFragment;
@@ -9,19 +8,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.Spinner;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class SettingsDialog extends DialogFragment implements DatePickerDialog.OnDateSetListener {
+public class SettingsDialog extends DialogFragment {
 
     public interface onFinishedListener {
-        public void onFinished(@SettingsDialog.SortOrder int sortOrder, @CheckboxOptions.CHOICES int checkboxOptions, Calendar curDate);
+        public void onFinished(@SettingsDialog.SortOrder int sortOrder, @CheckboxOptions.CHOICES int checkboxOptions);
     };
 
     Calendar curDate;
@@ -52,6 +53,9 @@ public class SettingsDialog extends DialogFragment implements DatePickerDialog.O
     @Bind(R.id.btnSave)
     Button save;
 
+    @Bind(R.id.beginDate)
+    EditText beginDate;
+
     public SettingsDialog() {
         // Empty constructor is required for DialogFragment
         // Make sure not to add arguments to the constructor
@@ -73,7 +77,8 @@ public class SettingsDialog extends DialogFragment implements DatePickerDialog.O
 
     }
 
-    public void showTimePickerDialog(View v) {
+    @OnClick(R.id.beginDate)
+    public void showDatePickerFragment(View v) {
         DatePickerFragment newFragment = new DatePickerFragment();
 
         newFragment.show(getActivity().getSupportFragmentManager(), "timePicker");
@@ -112,16 +117,14 @@ public class SettingsDialog extends DialogFragment implements DatePickerDialog.O
     @OnClick(R.id.btnSave)
     public void onSave() {
         onFinishedListener listener = (onFinishedListener) getActivity();
-        listener.onFinished(getSpinnerSelectedValue(), getChoices(), curDate);
+        listener.onFinished(getSpinnerSelectedValue(), getChoices());
         dismiss();
     }
 
-    @Override
-    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-
-        curDate.set(Calendar.YEAR, year);
-        curDate.set(Calendar.MONTH, monthOfYear);
-        curDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+    public void setDate(Date date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy  ");
+        beginDate.setText(dateFormat.format(date));
     }
+
 
 }

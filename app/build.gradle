@@ -17,10 +17,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            buildConfigField "boolean", "RecyclerViewAdapter", "false"
+            buildConfigField "boolean", "RecyclerViewAdapter", "true"
         }
     }
 }
+
+apply plugin: 'com.neenbedankt.android-apt'
+
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
@@ -32,4 +35,6 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.android.support:recyclerview-v7:23.1.1'
     compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'org.parceler:parceler-api:1.0.4'
+    apt 'org.parceler:parceler:1.0.4'
 }

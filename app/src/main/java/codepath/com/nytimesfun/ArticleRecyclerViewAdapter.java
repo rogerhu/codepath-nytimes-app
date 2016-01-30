@@ -3,6 +3,8 @@ package codepath.com.nytimesfun;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
+import org.parceler.Parcels;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -49,7 +51,7 @@ public class ArticleRecyclerViewAdapter extends RecyclerView.Adapter<ArticleRecy
             int position = getLayoutPosition();
             Article article = mArticles.get(position);
             Intent intent = new Intent(v.getContext(), ArticleActivity.class);
-            intent.putExtra(ArticleActivity.ARTICLE, article);
+            intent.putExtra(ArticleActivity.ARTICLE, Parcels.wrap(article));
             mContext.startActivity(intent);
         }
 
